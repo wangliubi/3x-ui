@@ -814,10 +814,10 @@ ssl_cert_issue_CF() {
     echo -E ""
     LOGD "******使用说明******"
     LOGI "此 Acme 脚本需要以下数据："
-    LOGI "1.Cloudflare注册邮箱"
-    LOGI "2.Cloudflare 全局 API 密钥"
-    LOGI "3.Cloudflare已解析dns到当前服务器的域名"
-    LOGI "4.脚本申请证书，默认安装路径为/root/cert "
+    LOGI "1. Cloudflare 注册邮箱"
+    LOGI "2. Cloudflare 全局 API 密钥"
+    LOGI "3. Cloudflare 已解析 dns 到当前服务器的域名"
+    LOGI "4. 脚本申请证书，默认安装路径为 /root/cert "
     confirm "确认申请? [y/n]" "y"
     if [ $? -eq 0 ]; then
         # check for acme.sh first
@@ -839,46 +839,46 @@ ssl_cert_issue_CF() {
             rm -rf $certPath
             mkdir $certPath
         fi
-        LOGD "Please set a domain name:"
-        read -p "Input your domain here:" CF_Domain
-        LOGD "Your domain name is set to:${CF_Domain}"
-        LOGD "Please set the API key:"
-        read -p "Input your key here:" CF_GlobalKey
-        LOGD "Your API key is:${CF_GlobalKey}"
-        LOGD "Please set up registered email:"
-        read -p "Input your email here:" CF_AccountEmail
-        LOGD "Your registered email address is:${CF_AccountEmail}"
+        LOGD "请设置域名:"
+        read -p "在此输入您的域名:" CF_Domain
+        LOGD "您的域名为: ${CF_Domain}"
+        LOGD "请设置 CF Global API Key:"
+        read -p "在此输入您的 API Key:" CF_GlobalKey
+        LOGD "您的 API 密钥是: ${CF_GlobalKey}"
+        LOGD "请设置注册邮箱:"
+        read -p "在此输入您的邮箱:" CF_AccountEmail
+        LOGD "您的账号邮箱地址是: ${CF_AccountEmail}"
         ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
-            LOGE "Default CA, Lets'Encrypt fail, script exiting..."
+            LOGE "默认 CA: Lets'Encrypt 失败，脚本退出..."
             exit 1
         fi
         export CF_Key="${CF_GlobalKey}"
         export CF_Email=${CF_AccountEmail}
         ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
-            LOGE "Certificate issuance failed, script exiting..."
+            LOGE "证书颁发失败，脚本退出..."
             exit 1
         else
-            LOGI "Certificate issued Successfully, Installing..."
+            LOGI "证书颁发成功，正在安装..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
             --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
             --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
-            LOGE "Certificate installation failed, script exiting..."
+            LOGE "证书安装失败，脚本退出..."
             exit 1
         else
-            LOGI "Certificate installed Successfully,Turning on automatic updates..."
+            LOGI "证书安装成功，开启自动更新..."
         fi
         ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
-            LOGE "Auto update setup Failed, script exiting..."
+            LOGE "自动更新设置失败，脚本退出..."
             ls -lah cert
             chmod 755 $certPath
             exit 1
         else
-            LOGI "The certificate is installed and auto-renewal is turned on, Specific information is as follows"
+            LOGI "证书已安装并开启自动续订，具体信息如下:"
             ls -lah cert
             chmod 755 $certPath
         fi
@@ -1003,7 +1003,7 @@ actionunban = <iptables> -D f2b-<name> -s <ip> -j <blocktype>
 [Init]
 EOF
 
-    echo -e "${green}使用 ${bantime} 分钟的禁止时间创建的 Ip Limit 限制文件。${plain}"
+    echo -e "${green}使用 ${bantime} 分钟的禁止时间以创建的 IP Limit 限制文件。${plain}"
 }
 
 iplimit_remove_conflicts() {
@@ -1016,18 +1016,18 @@ iplimit_remove_conflicts() {
         # Check for [3x-ipl] config in jail file then remove it
         if test -f "${file}" && grep -qw '3x-ipl' ${file}; then
             sed -i "/\[3x-ipl\]/,/^$/d" ${file}
-            echo -e "${yellow}Removing conflicts of [3x-ipl] in jail (${file})!${plain}\n"
+            echo -e "${yellow}消除监狱中 [3x-ipl] 的冲突 (${file})!${plain}\n"
         fi
     done
 }
 
 iplimit_main() {
-    echo -e "\n${green}\t1.${plain} Install Fail2ban and configure IP Limit"
-    echo -e "${green}\t2.${plain} Change Ban Duration"
-    echo -e "${green}\t3.${plain} Unban Everyone"
-    echo -e "${green}\t4.${plain} Check Logs"
-    echo -e "${green}\t5.${plain} fail2ban status"
-    echo -e "${green}\t6.${plain} Uninstall IP Limit"
+    echo -e "\n${green}\t1.${plain} 安装 Fail2ban 并配置 IP 限制"
+    echo -e "${green}\t2.${plain} 更改禁止期限"
+    echo -e "${green}\t3.${plain} 解禁所有 IP"
+    echo -e "${green}\t4.${plain} 查看日志"
+    echo -e "${green}\t5.${plain} Fail2ban 状态"
+    echo -e "${green}\t6.${plain} 卸载 IP 限制"
     echo -e "${green}\t0.${plain} 返回主菜单"
     read -p "请输入选项: " choice
     case "$choice" in
@@ -1035,7 +1035,7 @@ iplimit_main() {
         show_menu
         ;;
     1)
-        confirm "Proceed with installation of Fail2ban & IP Limit?" "y"
+        confirm "继续安装 Fail2ban 和 IP 限制?" "y"
         if [[ $? == 0 ]]; then
             install_iplimit
         else
@@ -1043,24 +1043,24 @@ iplimit_main() {
         fi
         ;;
     2)
-        read -rp "Please enter new Ban Duration in Minutes [default 30]: " NUM
+        read -rp "请输入新的禁令持续时间（以分钟为单位）[默认 30]: " NUM
         if [[ $NUM =~ ^[0-9]+$ ]]; then
             create_iplimit_jails ${NUM}
             systemctl restart fail2ban
         else
-            echo -e "${red}${NUM} is not a number! Please, try again.${plain}"
+            echo -e "${red}${NUM} 不是一个数字！ 请再试一次.${plain}"
         fi
         iplimit_main
         ;;
     3)
-        confirm "Proceed with Unbanning everyone from IP Limit jail?" "y"
+        confirm "继续解除所有人的 IP 限制禁令?" "y"
         if [[ $? == 0 ]]; then
             fail2ban-client reload --restart --unban 3x-ipl
             truncate -s 0 "${iplimit_banned_log_path}"
-            echo -e "${green}All users Unbanned successfully.${plain}"
+            echo -e "${green}所有用户已成功解封${plain}"
             iplimit_main
         else
-            echo -e "${yellow}Cancelled.${plain}"
+            echo -e "${yellow}已取消${plain}"
         fi
         iplimit_main
         ;;
@@ -1080,7 +1080,7 @@ iplimit_main() {
 
 install_iplimit() {
     if ! command -v fail2ban-client &>/dev/null; then
-        echo -e "${green}Fail2ban is not installed. Installing now...!${plain}\n"
+        echo -e "${green}未安装 Fail2ban。正在安装...!${plain}\n"
 
         # Check the OS and install necessary packages
         case "${release}" in
@@ -1095,22 +1095,22 @@ install_iplimit() {
             dnf -y update && dnf -y install fail2ban
             ;;
         *)
-            echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+            echo -e "${red}不支持的操作系统，请检查脚本并手动安装必要的软件包.${plain}\n"
             exit 1
             ;;
         esac
 
         if ! command -v fail2ban-client &>/dev/null; then
-            echo -e "${red}Fail2ban installation failed.${plain}\n"
+            echo -e "${red}Fail2ban 安装失败${plain}\n"
             exit 1
         fi
 
-        echo -e "${green}Fail2ban installed successfully!${plain}\n"
+        echo -e "${green}Fail2ban 安装成功!${plain}\n"
     else
-        echo -e "${yellow}Fail2ban is already installed.${plain}\n"
+        echo -e "${yellow}Fail2ban 已安装${plain}\n"
     fi
 
-    echo -e "${green}Configuring IP Limit...${plain}\n"
+    echo -e "${green}配置 IP 限制中...${plain}\n"
 
     # make sure there's no conflict for jail files
     iplimit_remove_conflicts
@@ -1138,14 +1138,14 @@ install_iplimit() {
     fi
     systemctl enable fail2ban
 
-    echo -e "${green}IP Limit installed and configured successfully!${plain}\n"
+    echo -e "${green}IP 限制安装并配置成功!${plain}\n"
     before_show_menu
 }
 
 remove_iplimit() {
-    echo -e "${green}\t1.${plain} Only remove IP Limit configurations"
-    echo -e "${green}\t2.${plain} Uninstall Fail2ban and IP Limit"
-    echo -e "${green}\t0.${plain} Abort"
+    echo -e "${green}\t1.${plain} 仅删除 IP 限制配置"
+    echo -e "${green}\t2.${plain} 卸载 Fail2ban 和 IP 限制"
+    echo -e "${green}\t0.${plain} 终止"
     read -p "请输入选项: " num
     case "$num" in
     1)
@@ -1153,7 +1153,7 @@ remove_iplimit() {
         rm -f /etc/fail2ban/action.d/3x-ipl.conf
         rm -f /etc/fail2ban/jail.d/3x-ipl.conf
         systemctl restart fail2ban
-        echo -e "${green}IP Limit removed successfully!${plain}\n"
+        echo -e "${green}IP 限制成功解除!${plain}\n"
         before_show_menu
         ;;
     2)
@@ -1174,19 +1174,19 @@ remove_iplimit() {
             dnf autoremove -y
             ;;
         *)
-            echo -e "${red}Unsupported operating system. Please uninstall Fail2ban manually.${plain}\n"
+            echo -e "${red}不支持的操作系统，请手动卸载 Fail2ban.${plain}\n"
             exit 1
             ;;
         esac
-        echo -e "${green}Fail2ban and IP Limit removed successfully!${plain}\n"
+        echo -e "${green}Fail2ban 和 IP 限制已成功删除!${plain}\n"
         before_show_menu
         ;;
     0)
-        echo -e "${yellow}Cancelled.${plain}\n"
+        echo -e "${yellow}已取消${plain}\n"
         iplimit_main
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}无效选项。 请选择一个有效的选项。${plain}\n"
         remove_iplimit
         ;;
     esac
@@ -1321,7 +1321,7 @@ show_menu() {
         run_speedtest
         ;;
     *)
-        LOGE "Please enter the correct number [0-23]"
+        LOGE "请输入正确的选项 [0-23]"
         ;;
     esac
 }
