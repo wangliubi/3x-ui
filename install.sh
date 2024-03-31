@@ -21,7 +21,7 @@ else
     echo "检查服务器操作系统失败，请联系作者!" >&2
     exit 1
 fi
-echo "目前服务器的操作系统版本为: $release"
+echo "目前服务器的操作系统为: $release"
 
 arch3xui() {
     case "$(uname -m)" in

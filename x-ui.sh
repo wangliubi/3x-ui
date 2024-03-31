@@ -33,7 +33,7 @@ else
     exit 1
 fi
 
-echo "目前服务器的操作系统版本为: $release"
+echo "目前服务器的操作系统为: $release"
 
 os_version=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
 
@@ -743,18 +743,18 @@ ssl_cert_issue() {
 
     # get the domain here,and we need verify it
     local domain=""
-    read -p "Please enter your domain name:" domain
-    LOGD "your domain is:${domain},check it..."
+    read -p "请输入您的域名:" domain
+    LOGD "您的域名是：${domain}，正在检查..."
     # here we need to judge whether there exists cert already
     local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
 
     if [ ${currentCert} == ${domain} ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
-        LOGE "system already has certs here,can not issue again,current certs details:"
+        LOGE "系统已经有证书，无法再次颁发，当前证书详细信息:"
         LOGI "$certInfo"
         exit 1
     else
-        LOGI "your domain is ready for issuing cert now..."
+        LOGI "您的域现在已准备好颁发证书..."
     fi
 
     # create a directory for install cert
@@ -768,21 +768,21 @@ ssl_cert_issue() {
 
     # get needed port here
     local WebPort=80
-    read -p "please choose which port do you use,default will be 80 port:" WebPort
+    read -p "请选择您使用的端口，默认为 80 端口:" WebPort
     if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
-        LOGE "your input ${WebPort} is invalid,will use default port"
+        LOGE "您输入的端口 ${WebPort} 无效，将使用默认端口"
     fi
-    LOGI "will use port:${WebPort} to issue certs,please make sure this port is open..."
+    LOGI "将使用端口：${WebPort} 来颁发证书，请确保该端口已开启..."
     # NOTE:This should be handled by user
     # open the port and kill the occupied progress
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
     if [ $? -ne 0 ]; then
-        LOGE "issue certs failed,please check logs"
+        LOGE "颁发证书失败，请检查日志"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGE "issue certs succeed,installing certs..."
+        LOGE "颁发证书成功，安装证书..."
     fi
     # install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} \
@@ -790,21 +790,21 @@ ssl_cert_issue() {
         --fullchain-file /root/cert/${domain}/fullchain.pem
 
     if [ $? -ne 0 ]; then
-        LOGE "install certs failed,exit"
+        LOGE "安装证书失败"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGI "install certs succeed,enable auto renew..."
+        LOGI "安装证书成功，启用自动续订..."
     fi
 
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     if [ $? -ne 0 ]; then
-        LOGE "auto renew failed, certs details:"
+        LOGE "自动续订失败，证书详细信息:"
         ls -lah cert/*
         chmod 755 $certPath/*
         exit 1
     else
-        LOGI "auto renew succeed, certs details:"
+        LOGI "自动续订成功，证书详细信息:"
         ls -lah cert/*
         chmod 755 $certPath/*
     fi
@@ -812,20 +812,20 @@ ssl_cert_issue() {
 
 ssl_cert_issue_CF() {
     echo -E ""
-    LOGD "******Instructions for use******"
-    LOGI "This Acme script requires the following data:"
-    LOGI "1.Cloudflare Registered e-mail"
-    LOGI "2.Cloudflare Global API Key"
-    LOGI "3.The domain name that has been resolved dns to the current server by Cloudflare"
-    LOGI "4.The script applies for a certificate. The default installation path is /root/cert "
-    confirm "Confirmed?[y/n]" "y"
+    LOGD "******使用说明******"
+    LOGI "此 Acme 脚本需要以下数据："
+    LOGI "1.Cloudflare注册邮箱"
+    LOGI "2.Cloudflare 全局 API 密钥"
+    LOGI "3.Cloudflare已解析dns到当前服务器的域名"
+    LOGI "4.脚本申请证书，默认安装路径为/root/cert "
+    confirm "确认申请? [y/n]" "y"
     if [ $? -eq 0 ]; then
         # check for acme.sh first
         if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-            echo "acme.sh could not be found. we will install it"
+            echo "未找到 acme.sh, 正在安装"
             install_acme
             if [ $? -ne 0 ]; then
-                LOGE "install acme failed, please check logs"
+                LOGE "安装 acme 失败，请检查日志"
                 exit 1
             fi
         fi
@@ -936,7 +936,7 @@ run_speedtest() {
         fi
 
         if [[ -z $pkg_manager ]]; then
-            echo "Error: Package manager not found. You may need to install Speedtest manually."
+            echo "错误：找不到包管理器。 您可能需要手动安装 Speedtest"
             return 1
         else
             curl -s $speedtest_install_script | bash
@@ -1003,7 +1003,7 @@ actionunban = <iptables> -D f2b-<name> -s <ip> -j <blocktype>
 [Init]
 EOF
 
-    echo -e "${green}Ip Limit jail files created with a bantime of ${bantime} minutes.${plain}"
+    echo -e "${green}使用 ${bantime} 分钟的禁止时间创建的 Ip Limit 限制文件。${plain}"
 }
 
 iplimit_remove_conflicts() {
