@@ -319,9 +319,9 @@ enable() {
 disable() {
     systemctl disable x-ui
     if [[ $? == 0 ]]; then
-        LOGI "x-ui Autostart Cancelled successfully"
+        LOGI "x-ui 已成功取消开机启动"
     else
-        LOGE "x-ui Failed to cancel autostart"
+        LOGE "x-ui 取消开机启动失败"
     fi
 
     if [[ $# == 0 ]]; then
@@ -341,17 +341,17 @@ show_banlog() {
         if [[ -s "${iplimit_banned_log_path}" ]]; then
             cat ${iplimit_banned_log_path}
         else
-            echo -e "${red}Log file is empty.${plain}\n"
+            echo -e "${red}日志文件为空${plain}\n"
         fi
     else
-        echo -e "${red}Log file not found. Please Install Fail2ban and IP Limit first.${plain}\n"
+        echo -e "${red}未找到日志文件。 请先安装 Fail2ban 和 IP Limit${plain}\n"
     fi
 }
 
 bbr_menu() {
-    echo -e "${green}\t1.${plain} Enable BBR"
-    echo -e "${green}\t2.${plain} Disable BBR"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
+    echo -e "${green}\t1.${plain} 启用 BBR"
+    echo -e "${green}\t2.${plain} 禁用 BBR"
+    echo -e "${green}\t0.${plain} 返回主菜单"
     read -p "请输入选项: " choice
     case "$choice" in
     0)
@@ -363,14 +363,13 @@ bbr_menu() {
     2)
         disable_bbr
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "无效选项" ;;
     esac
 }
 
 disable_bbr() {
-
     if ! grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf || ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${yellow}BBR is not currently enabled.${plain}"
+        echo -e "${yellow}BBR 当前未启用${plain}"
         exit 0
     fi
 
@@ -383,15 +382,15 @@ disable_bbr() {
 
     # Verify that BBR is replaced with CUBIC
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "cubic" ]]; then
-        echo -e "${green}BBR has been replaced with CUBIC successfully.${plain}"
+        echo -e "${green}BBR 已成功替换为 CUBIC${plain}"
     else
-        echo -e "${red}Failed to replace BBR with CUBIC. Please check your system configuration.${plain}"
+        echo -e "${red}用 CUBIC 替换 BBR 失败，请检查您的系统配置。${plain}"
     fi
 }
 
 enable_bbr() {
     if grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf && grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${green}BBR is already enabled!${plain}"
+        echo -e "${green}BBR 已经启用!${plain}"
         exit 0
     fi
 
@@ -407,7 +406,7 @@ enable_bbr() {
         dnf -y update && dnf -y install ca-certificates
         ;;
     *)
-        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+        echo -e "${red}不支持的操作系统。请检查脚本并手动安装必要的软件包${plain}\n"
         exit 1
         ;;
     esac
@@ -421,9 +420,9 @@ enable_bbr() {
 
     # Verify that BBR is enabled
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "bbr" ]]; then
-        echo -e "${green}BBR has been enabled successfully.${plain}"
+        echo -e "${green}BBR 已成功启用${plain}"
     else
-        echo -e "${red}Failed to enable BBR. Please check your system configuration.${plain}"
+        echo -e "${red}启用 BBR 失败，请检查您的系统配置${plain}"
     fi
 }
 
@@ -431,11 +430,11 @@ update_shell() {
     wget -O /usr/bin/x-ui -N --no-check-certificate https://github.com/Misaka-blog/3x-ui/raw/main/x-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
-        LOGE "Failed to download script, Please check whether the machine can connect Github"
+        LOGE "下载脚本失败，请检查机器是否可以连接至 GitHub"
         before_show_menu
     else
         chmod +x /usr/bin/x-ui
-        LOGI "Upgrade script succeeded, Please rerun the script" && exit 0
+        LOGI "升级脚本成功，请重新运行脚本" && exit 0
     fi
 }
 
@@ -465,7 +464,7 @@ check_uninstall() {
     check_status
     if [[ $? != 2 ]]; then
         echo ""
-        LOGE "Panel installed, Please do not reinstall"
+        LOGE "面板已安装，请勿重新安装"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -479,7 +478,7 @@ check_install() {
     check_status
     if [[ $? == 2 ]]; then
         echo ""
-        LOGE "Please install the panel first"
+        LOGE "请先安装面板"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -493,15 +492,15 @@ show_status() {
     check_status
     case $? in
     0)
-        echo -e "Panel state: ${green}Running${plain}"
+        echo -e "面板状态: ${green}运行中${plain}"
         show_enable_status
         ;;
     1)
-        echo -e "Panel state: ${yellow}Not Running${plain}"
+        echo -e "面板状态: ${yellow}未运行${plain}"
         show_enable_status
         ;;
     2)
-        echo -e "Panel state: ${red}Not Installed${plain}"
+        echo -e "面板状态: ${red}未安装${plain}"
         ;;
     esac
     show_xray_status
@@ -510,9 +509,9 @@ show_status() {
 show_enable_status() {
     check_enabled
     if [[ $? == 0 ]]; then
-        echo -e "Start automatically: ${green}Yes${plain}"
+        echo -e "开机启动: ${green}是${plain}"
     else
-        echo -e "Start automatically: ${red}No${plain}"
+        echo -e "开机启动: ${red}否${plain}"
     fi
 }
 
@@ -528,18 +527,18 @@ check_xray_status() {
 show_xray_status() {
     check_xray_status
     if [[ $? == 0 ]]; then
-        echo -e "xray state: ${green}Running${plain}"
+        echo -e "xray 状态: ${green}运行中${plain}"
     else
-        echo -e "xray state: ${red}Not Running${plain}"
+        echo -e "xray 状态: ${red}未运行${plain}"
     fi
 }
 
 firewall_menu() {
-    echo -e "${green}\t1.${plain} Install Firewall & open ports"
-    echo -e "${green}\t2.${plain} Allowed List"
-    echo -e "${green}\t3.${plain} Delete Ports from List"
-    echo -e "${green}\t4.${plain} Disable Firewall"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
+    echo -e "${green}\t1.${plain} 安装防火墙并开放端口"
+    echo -e "${green}\t2.${plain} 允许列表"
+    echo -e "${green}\t3.${plain} 从列表中删除端口"
+    echo -e "${green}\t4.${plain} 禁用防火墙"
+    echo -e "${green}\t0.${plain} 返回主菜单"
     read -p "请输入选项: " choice
     case "$choice" in
     0)
@@ -557,22 +556,22 @@ firewall_menu() {
     4)
         sudo ufw disable
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "无效选项" ;;
     esac
 }
 
 open_ports() {
     if ! command -v ufw &>/dev/null; then
-        echo "ufw firewall is not installed. Installing now..."
+        echo "ufw 防火墙未安装，正在安装..."
         apt-get update
         apt-get install -y ufw
     else
-        echo "ufw firewall is already installed"
+        echo "ufw 防火墙已安装"
     fi
 
     # Check if the firewall is inactive
     if ufw status | grep -q "Status: active"; then
-        echo "firewall is already active"
+        echo "防火墙已经激活"
     else
         # Open the necessary ports
         ufw allow ssh
@@ -585,11 +584,11 @@ open_ports() {
     fi
 
     # Prompt the user to enter a list of ports
-    read -p "Enter the ports you want to open (e.g. 80,443,2053 or range 400-500): " ports
+    read -p "输入您要打开的端口（例如 80,443,2053 或端口范围 400-500): " ports
 
     # Check if the input is valid
     if ! [[ $ports =~ ^([0-9]+|[0-9]+-[0-9]+)(,([0-9]+|[0-9]+-[0-9]+))*$ ]]; then
-        echo "Error: Invalid input. Please enter a comma-separated list of ports or a range of ports (e.g. 80,443,2053 or 400-500)." >&2
+        echo "错误：输入无效。请输入以逗号分隔的端口列表或端口范围（例如 80,443,2053 或 400-500)" >&2
         exit 1
     fi
 
@@ -615,11 +614,11 @@ open_ports() {
 
 delete_ports() {
     # Prompt the user to enter the ports they want to delete
-    read -p "Enter the ports you want to delete (e.g. 80,443,2053 or range 400-500): " ports
+    read -p "输入要删除的端口（例如 80,443,2053 或范围 400-500): " ports
 
     # Check if the input is valid
     if ! [[ $ports =~ ^([0-9]+|[0-9]+-[0-9]+)(,([0-9]+|[0-9]+-[0-9]+))*$ ]]; then
-        echo "Error: Invalid input. Please enter a comma-separated list of ports or a range of ports (e.g. 80,443,2053 or 400-500)." >&2
+        echo "错误：输入无效。请输入以逗号分隔的端口列表或端口范围（例如 80,443,2053 或 400-500)" >&2
         exit 1
     fi
 
@@ -640,17 +639,17 @@ delete_ports() {
     done
 
     # Confirm that the ports are deleted
-    echo "Deleted the specified ports:"
+    echo "删除指定端口:"
     ufw status | grep $ports
 }
 
 update_geo() {
     local defaultBinFolder="/usr/local/x-ui/bin"
-    read -p "Please enter x-ui bin folder path. Leave blank for default. (Default: '${defaultBinFolder}')" binFolder
+    read -p "请输入 x-ui bin 文件夹路径，默认留空。（默认值：'${defaultBinFolder}')" binFolder
     binFolder=${binFolder:-${defaultBinFolder}}
     if [[ ! -d ${binFolder} ]]; then
-        LOGE "Folder ${binFolder} not exists!"
-        LOGI "making bin folder: ${binFolder}..."
+        LOGE "文件夹 ${binFolder} 不存在！"
+        LOGI "制作 bin 文件夹：${binFolder}..."
         mkdir -p ${binFolder}
     fi
 
@@ -664,7 +663,7 @@ update_geo() {
     wget -O geoip_VN.dat https://github.com/vuong2023/vn-v2ray-rules/releases/latest/download/geoip.dat
     wget -O geosite_VN.dat https://github.com/vuong2023/vn-v2ray-rules/releases/latest/download/geosite.dat
     systemctl start x-ui
-    echo -e "${green}Geosite.dat + Geoip.dat + geoip_IR.dat + geosite_IR.dat have been updated successfully in bin folder '${binfolder}'!${plain}"
+    echo -e "${green}Geosite.dat + Geoip.dat + geoip_IR.dat + geosite_IR.dat 在 bin 文件夹: '${binfolder}' 中已经更新成功 !${plain}"
     before_show_menu
 }
 
@@ -673,19 +672,19 @@ install_acme() {
     LOGI "install acme..."
     curl https://get.acme.sh | sh
     if [ $? -ne 0 ]; then
-        LOGE "install acme failed"
+        LOGE "安装 acme 失败"
         return 1
     else
-        LOGI "install acme succeed"
+        LOGI "安装 acme 成功"
     fi
     return 0
 }
 
 ssl_cert_issue_main() {
-    echo -e "${green}\t1.${plain} Get SSL"
-    echo -e "${green}\t2.${plain} Revoke"
-    echo -e "${green}\t3.${plain} Force Renew"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
+    echo -e "${green}\t1.${plain} 获取 SSL 证书"
+    echo -e "${green}\t2.${plain} 吊销证书"
+    echo -e "${green}\t3.${plain} 续签证书"
+    echo -e "${green}\t0.${plain} 返回主菜单"
     read -p "请输入选项: " choice
     case "$choice" in
     0)
@@ -696,26 +695,26 @@ ssl_cert_issue_main() {
         ;;
     2)
         local domain=""
-        read -p "Please enter your domain name to revoke the certificate: " domain
+        read -p "请输入您的域名以吊销证书: " domain
         ~/.acme.sh/acme.sh --revoke -d ${domain}
-        LOGI "Certificate revoked"
+        LOGI "证书吊销成功"
         ;;
     3)
         local domain=""
-        read -p "Please enter your domain name to forcefully renew an SSL certificate: " domain
+        read -p "请输入您的域名以续签 SSL 证书: " domain
         ~/.acme.sh/acme.sh --renew -d ${domain} --force
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "无效选项" ;;
     esac
 }
 
 ssl_cert_issue() {
     # check for acme.sh first
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        echo "acme.sh could not be found. we will install it"
+        echo "未找到 acme.sh, 正在安装"
         install_acme
         if [ $? -ne 0 ]; then
-            LOGE "install acme failed, please check logs"
+            LOGE "安装 acme 失败，请检查日志"
             exit 1
         fi
     fi
@@ -731,15 +730,15 @@ ssl_cert_issue() {
         dnf -y update && dnf -y install socat
         ;;
     *)
-        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+        echo -e "${red}不支持的操作系统，请检查脚本并手动安装必要的软件包。${plain}\n"
         exit 1
         ;;
     esac
     if [ $? -ne 0 ]; then
-        LOGE "install socat failed, please check logs"
+        LOGE "安装 socat 失败，请检查日志"
         exit 1
     else
-        LOGI "install socat succeed..."
+        LOGI "安装 socat 成功..."
     fi
 
     # get the domain here,and we need verify it
@@ -911,7 +910,7 @@ warp_cloudflare() {
     4)
         warp u
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "无效选项" ;;
     esac
 }
 
@@ -1029,7 +1028,7 @@ iplimit_main() {
     echo -e "${green}\t4.${plain} Check Logs"
     echo -e "${green}\t5.${plain} fail2ban status"
     echo -e "${green}\t6.${plain} Uninstall IP Limit"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
+    echo -e "${green}\t0.${plain} 返回主菜单"
     read -p "请输入选项: " choice
     case "$choice" in
     0)
@@ -1075,7 +1074,7 @@ iplimit_main() {
     6)
         remove_iplimit
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "无效选项" ;;
     esac
 }
 

@@ -1,7 +1,5 @@
 # 3X-UI
 
-[English](/README.md) | [Chinese](/README.zh.md)
-
 <p align="center"><a href="#"><img src="./media/3X-UI.png" alt="Image"></a></p>
 
 **一个更好的面板 • 基于Xray Core构建**
@@ -464,6 +462,6 @@ XUI_BIN_FOLDER="bin" XUI_DB_FOLDER="/etc/x-ui" go build main.go
 - [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (License: **GPL-3.0**): _Enhanced v2ray/xray and v2ray/xray-clients routing rules with built-in Iranian domains and a focus on security and adblocking._
 - [Vietnam Adblock rules](https://github.com/vuong2023/vn-v2ray-rules) (License: **GPL-3.0**): _A hosted domain hosted in Vietnam and blocklist with the most efficiency for Vietnamese._
 
-## Star趋势
+## Star 趋势
 
 [![Stargazers over time](https://starchart.cc/Misaka-blog/3x-ui.svg)](https://starchart.cc/Misaka-blog/3x-ui)
