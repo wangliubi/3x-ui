@@ -19,7 +19,7 @@ function LOGI() {
 }
 
 # check root
-[[ $EUID -ne 0 ]] && LOGE "ERROR: You must be root to run this script! \n" && exit 1
+[[ $EUID -ne 0 ]] && echo -e "${red}致命错误: ${plain} 请使用 root 权限运行此脚本\n" && exit 1
 
 # Check OS and set release variable
 if [[ -f /etc/os-release ]]; then
@@ -29,45 +29,48 @@ elif [[ -f /usr/lib/os-release ]]; then
     source /usr/lib/os-release
     release=$ID
 else
-    echo "Failed to check the system OS, please contact the author!" >&2
+    echo "检查服务器操作系统失败，请联系作者!" >&2
     exit 1
 fi
 
-echo "The OS release is: $release"
+echo "目前服务器的操作系统版本为: $release"
 
-os_version=""
 os_version=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
 
 if [[ "${release}" == "centos" ]]; then
     if [[ ${os_version} -lt 8 ]]; then
-        echo -e "${red} Please use CentOS 8 or higher ${plain}\n" && exit 1
+        echo -e "${red} 请使用 CentOS 8 或更高版本 ${plain}\n" && exit 1
     fi
 elif [[ "${release}" == "ubuntu" ]]; then
     if [[ ${os_version} -lt 20 ]]; then
-        echo -e "${red}please use Ubuntu 20 or higher version! ${plain}\n" && exit 1
+        echo -e "${red} 请使用 Ubuntu 20 或更高版本!${plain}\n" && exit 1
     fi
+
 elif [[ "${release}" == "fedora" ]]; then
     if [[ ${os_version} -lt 36 ]]; then
-        echo -e "${red}please use Fedora 36 or higher version! ${plain}\n" && exit 1
+        echo -e "${red} 请使用 Fedora 36 或更高版本!${plain}\n" && exit 1
     fi
+
 elif [[ "${release}" == "debian" ]]; then
     if [[ ${os_version} -lt 11 ]]; then
-        echo -e "${red} Please use Debian 11 or higher ${plain}\n" && exit 1
+        echo -e "${red} 请使用 Debian 11 或更高版本 ${plain}\n" && exit 1
     fi
+
 elif [[ "${release}" == "almalinux" ]]; then
     if [[ ${os_version} -lt 9 ]]; then
-        echo -e "${red} Please use Almalinux 9 or higher ${plain}\n" && exit 1
+        echo -e "${red} 请使用 AlmaLinux 9 或更高版本 ${plain}\n" && exit 1
     fi
+
 elif [[ "${release}" == "rocky" ]]; then
     if [[ ${os_version} -lt 9 ]]; then
-        echo -e "${red} Please use Rockylinux 9 or higher ${plain}\n" && exit 1
+        echo -e "${red} 请使用 RockyLinux 9 或更高版本 ${plain}\n" && exit 1
     fi
 elif [[ "${release}" == "arch" ]]; then
-    echo "Your OS is ArchLinux"
+    echo "您的操作系统是 ArchLinux"
 elif [[ "${release}" == "manjaro" ]]; then
-    echo "Your OS is Manjaro"
+    echo "您的操作系统是 Manjaro"
 elif [[ "${release}" == "armbian" ]]; then
-    echo "Your OS is Armbian"
+    echo "您的操作系统是 Armbian"
 fi
 
 # Declare Variables
@@ -92,7 +95,7 @@ confirm() {
 }
 
 confirm_restart() {
-    confirm "Restart the panel, Attention: Restarting the panel will also restart xray" "y"
+    confirm "重启面板，注意：重启面板也会重启 xray" "y"
     if [[ $? == 0 ]]; then
         restart
     else
@@ -101,7 +104,7 @@ confirm_restart() {
 }
 
 before_show_menu() {
-    echo && echo -n -e "${yellow}Press enter to return to the main menu: ${plain}" && read temp
+    echo && echo -n -e "${yellow}按 Enter 键返回主菜单：${plain}" && read temp
     show_menu
 }
 
@@ -117,9 +120,9 @@ install() {
 }
 
 update() {
-    confirm "This function will forcefully reinstall the latest version, and the data will not be lost. Do you want to continue?" "y"
+    confirm "该功能将强制安装最新版本，并且数据不会丢失。你想继续吗?" "y"
     if [[ $? != 0 ]]; then
-        LOGE "Cancelled"
+        LOGE "已取消"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -127,17 +130,17 @@ update() {
     fi
     bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/main/install.sh)
     if [[ $? == 0 ]]; then
-        LOGI "Update is complete, Panel has automatically restarted "
+        LOGI "更新完成，面板已自动重启"
         exit 0
     fi
 }
 
 custom_version() {
-    echo "Enter the panel version (like 2.0.0):"
+    echo "输入面板版本 (例: 2.0.0):"
     read panel_version
 
     if [ -z "$panel_version" ]; then
-        echo "Panel version cannot be empty. Exiting."
+        echo "面板版本不能为空。"
         exit 1
     fi
 
@@ -146,7 +149,7 @@ custom_version() {
     # Use the entered panel version in the download link
     install_command="bash <(curl -Ls $download_link) v$panel_version"
 
-    echo "Downloading and installing panel version $panel_version..."
+    echo "下载并安装面板版本 $panel_version..."
     eval $install_command
 }
 
@@ -157,7 +160,7 @@ delete_script() {
 }
 
 uninstall() {
-    confirm "Are you sure you want to uninstall the panel? xray will also uninstalled!" "n"
+    confirm "您确定要卸载面板吗? xray 也将被卸载!" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -173,8 +176,8 @@ uninstall() {
     rm /usr/local/x-ui/ -rf
 
     echo ""
-    echo -e "Uninstalled Successfully.\n"
-    echo "If you need to install this panel again, you can use below command:"
+    echo -e "卸载成功\n"
+    echo "如果您需要再次安装此面板，可以使用以下命令:"
     echo -e "${green}bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/install.sh)${plain}"
     echo ""
     # Trap the SIGTERM signal
@@ -183,28 +186,28 @@ uninstall() {
 }
 
 reset_user() {
-    confirm "Are you sure to reset the username and password of the panel?" "n"
+    confirm "您确定重置面板的用户名和密码吗?" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
         fi
         return 0
     fi
-    read -rp "Please set the login username [default is a random username]: " config_account
+    read -rp "请设置用户名 [默认为随机用户名]: " config_account
     [[ -z $config_account ]] && config_account=$(date +%s%N | md5sum | cut -c 1-8)
-    read -rp "Please set the login password [default is a random password]: " config_password
+    read -rp "请设置密码 [默认为随机密码]: " config_password
     [[ -z $config_password ]] && config_password=$(date +%s%N | md5sum | cut -c 1-8)
     /usr/local/x-ui/x-ui setting -username ${config_account} -password ${config_password} >/dev/null 2>&1
     /usr/local/x-ui/x-ui setting -remove_secret >/dev/null 2>&1
-    echo -e "Panel login username has been reset to: ${green} ${config_account} ${plain}"
-    echo -e "Panel login password has been reset to: ${green} ${config_password} ${plain}"
-    echo -e "${yellow} Panel login secret token disabled ${plain}"
-    echo -e "${green} Please use the new login username and password to access the X-UI panel. Also remember them! ${plain}"
+    echo -e "面板登录用户名已重置为：${green} ${config_account} ${plain}"
+    echo -e "面板登录密码已重置为：${green} ${config_password} ${plain}"
+    echo -e "${yellow} 面板 Secret Token 已禁用 ${plain}"
+    echo -e "${green} 请使用新的登录用户名和密码访问 X-UI 面板。也请记住它们！${plain}"
     confirm_restart
 }
 
 reset_config() {
-    confirm "Are you sure you want to reset all panel settings, Account data will not be lost, Username and password will not change" "n"
+    confirm "您确定要重置所有面板设置，帐户数据不会丢失，用户名和密码不会更改" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -212,27 +215,27 @@ reset_config() {
         return 0
     fi
     /usr/local/x-ui/x-ui setting -reset
-    echo -e "All panel settings have been reset to default, Please restart the panel now, and use the default ${green}2053${plain} Port to Access the web Panel"
+    echo -e "所有面板设置已重置为默认，请立即重新启动面板，并使用默认的${green}2053${plain}端口访问网页面板"
     confirm_restart
 }
 
 check_config() {
     info=$(/usr/local/x-ui/x-ui setting -show true)
     if [[ $? != 0 ]]; then
-        LOGE "get current settings error, please check logs"
+        LOGE "获取当前设置错误，请检查日志"
         show_menu
     fi
     LOGI "${info}"
 }
 
 set_port() {
-    echo && echo -n -e "Enter port number[1-65535]: " && read port
+    echo && echo -n -e "输入端口号 [1-65535]: " && read port
     if [[ -z "${port}" ]]; then
         LOGD "Cancelled"
         before_show_menu
     else
         /usr/local/x-ui/x-ui setting -port ${port}
-        echo -e "The port is set, Please restart the panel now, and use the new port ${green}${port}${plain} to access web panel"
+        echo -e "端口已设置，请立即重启面板，并使用新端口 ${green}${port}${plain} 以访问面板"
         confirm_restart
     fi
 }
@@ -241,15 +244,15 @@ start() {
     check_status
     if [[ $? == 0 ]]; then
         echo ""
-        LOGI "Panel is running, No need to start again, If you need to restart, please select restart"
+        LOGI "面板正在运行，无需再次启动，如需重新启动，请选择重新启动"
     else
         systemctl start x-ui
         sleep 2
         check_status
         if [[ $? == 0 ]]; then
-            LOGI "x-ui Started Successfully"
+            LOGI "x-ui 已成功启动"
         else
-            LOGE "panel Failed to start, Probably because it takes longer than two seconds to start, Please check the log information later"
+            LOGE "面板启动失败，可能是启动时间超过两秒，请稍后查看日志信息"
         fi
     fi
 
@@ -262,15 +265,15 @@ stop() {
     check_status
     if [[ $? == 1 ]]; then
         echo ""
-        LOGI "Panel stopped, No need to stop again!"
+        LOGI "面板已关闭，无需再次关闭！"
     else
         systemctl stop x-ui
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "x-ui and xray stopped successfully"
+            LOGI "x-ui 和 xray 已成功关闭"
         else
-            LOGE "Panel stop failed, Probably because the stop time exceeds two seconds, Please check the log information later"
+            LOGE "面板关闭失败，可能是停止时间超过两秒，请稍后查看日志信息"
         fi
     fi
 
@@ -284,9 +287,9 @@ restart() {
     sleep 2
     check_status
     if [[ $? == 0 ]]; then
-        LOGI "x-ui and xray Restarted successfully"
+        LOGI "x-ui and xray 已成功重启"
     else
-        LOGE "Panel restart failed, Probably because it takes longer than two seconds to start, Please check the log information later"
+        LOGE "面板重启失败，可能是启动时间超过两秒，请稍后查看日志信息"
     fi
     if [[ $# == 0 ]]; then
         before_show_menu
@@ -303,9 +306,9 @@ status() {
 enable() {
     systemctl enable x-ui
     if [[ $? == 0 ]]; then
-        LOGI "x-ui Set to boot automatically on startup successfully"
+        LOGI "x-ui 已成功设置开机启动"
     else
-        LOGE "x-ui Failed to set Autostart"
+        LOGE "x-ui 设置开机启动失败"
     fi
 
     if [[ $# == 0 ]]; then
@@ -349,7 +352,7 @@ bbr_menu() {
     echo -e "${green}\t1.${plain} Enable BBR"
     echo -e "${green}\t2.${plain} Disable BBR"
     echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    read -p "请输入选项: " choice
     case "$choice" in
     0)
         show_menu
@@ -537,7 +540,7 @@ firewall_menu() {
     echo -e "${green}\t3.${plain} Delete Ports from List"
     echo -e "${green}\t4.${plain} Disable Firewall"
     echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    read -p "请输入选项: " choice
     case "$choice" in
     0)
         show_menu
@@ -683,7 +686,7 @@ ssl_cert_issue_main() {
     echo -e "${green}\t2.${plain} Revoke"
     echo -e "${green}\t3.${plain} Force Renew"
     echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    read -p "请输入选项: " choice
     case "$choice" in
     0)
         show_menu
@@ -886,12 +889,12 @@ ssl_cert_issue_CF() {
 }
 
 warp_cloudflare() {
-    echo -e "${green}\t1.${plain} Install WARP socks5 proxy"
-    echo -e "${green}\t2.${plain} Account Type (free, plus, team)"
-    echo -e "${green}\t3.${plain} Turn on/off WireProxy"
-    echo -e "${green}\t4.${plain} Uninstall WARP"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    echo -e "${green}\t1.${plain} 安装 WARP socks5 代理"
+    echo -e "${green}\t2.${plain} 账户类型 (free, plus, team)"
+    echo -e "${green}\t3.${plain} 开启 / 关闭 WireProxy"
+    echo -e "${green}\t4.${plain} 卸载 WARP"
+    echo -e "${green}\t0.${plain} 返回主菜单"
+    read -p "请输入选项: " choice
     case "$choice" in
     0)
         show_menu
@@ -1027,7 +1030,7 @@ iplimit_main() {
     echo -e "${green}\t5.${plain} fail2ban status"
     echo -e "${green}\t6.${plain} Uninstall IP Limit"
     echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    read -p "请输入选项: " choice
     case "$choice" in
     0)
         show_menu
@@ -1144,7 +1147,7 @@ remove_iplimit() {
     echo -e "${green}\t1.${plain} Only remove IP Limit configurations"
     echo -e "${green}\t2.${plain} Uninstall Fail2ban and IP Limit"
     echo -e "${green}\t0.${plain} Abort"
-    read -p "Choose an option: " num
+    read -p "请输入选项: " num
     case "$num" in
     1)
         rm -f /etc/fail2ban/filter.d/3x-ipl.conf
@@ -1191,59 +1194,59 @@ remove_iplimit() {
 }
 
 show_usage() {
-    echo "x-ui control menu usages: "
-    echo "------------------------------------------"
-    echo -e "x-ui              - Enter control menu"
-    echo -e "x-ui start        - Start x-ui "
-    echo -e "x-ui stop         - Stop  x-ui "
-    echo -e "x-ui restart      - Restart x-ui "
-    echo -e "x-ui status       - Show x-ui status"
-    echo -e "x-ui enable       - Enable x-ui on system startup"
-    echo -e "x-ui disable      - Disable x-ui on system startup"
-    echo -e "x-ui log          - Check x-ui logs"
-    echo -e "x-ui banlog       - Check Fail2ban ban logs"
-    echo -e "x-ui update       - Update x-ui "
-    echo -e "x-ui install      - Install x-ui "
-    echo -e "x-ui uninstall    - Uninstall x-ui "
-    echo "------------------------------------------"
+    echo -e "x-ui 控制菜单用法: "
+    echo -e "----------------------------------------------"
+    echo -e "x-ui              - 进入管理脚本"
+    echo -e "x-ui start        - 启动 x-ui"
+    echo -e "x-ui stop         - 关闭 x-ui"
+    echo -e "x-ui restart      - 重启 x-ui"
+    echo -e "x-ui status       - 查看 x-ui 状态"
+    echo -e "x-ui enable       - 启用 x-ui 开机启动"
+    echo -e "x-ui disable      - 禁用 x-ui 开机启动"
+    echo -e "x-ui log          - 查看 x-ui 运行日志"
+    echo -e "x-ui banlog       - 检查 Fail2ban 禁止日志"
+    echo -e "x-ui update       - 更新 x-ui"
+    echo -e "x-ui install      - 安装 x-ui"
+    echo -e "x-ui uninstall    - 卸载 x-ui"
+    echo -e "----------------------------------------------"
 }
 
 show_menu() {
     echo -e "
-  ${green}3X-ui Panel Management Script${plain}
-  ${green}0.${plain} Exit Script
+  ${green}3X-ui 面板管理脚本${plain}
+  ${green}0.${plain} 退出脚本
 ————————————————
-  ${green}1.${plain} Install
-  ${green}2.${plain} Update
-  ${green}3.${plain} Custom Version
-  ${green}4.${plain} Uninstall
+  ${green}1.${plain} 安装面板
+  ${green}2.${plain} 更新面板
+  ${green}3.${plain} 自定义版本
+  ${green}4.${plain} 卸载面板
 ————————————————
-  ${green}5.${plain} Reset Username & Password & Secret Token
-  ${green}6.${plain} Reset Settings
-  ${green}7.${plain} Change Port
-  ${green}8.${plain} View Current Settings
+  ${green}5.${plain} 重置用户名、密码和 Secret Token
+  ${green}6.${plain} 重置面板设置
+  ${green}7.${plain} 修改面板端口
+  ${green}8.${plain} 查看面板设置
 ————————————————
-  ${green}9.${plain} Start
-  ${green}10.${plain} Stop
-  ${green}11.${plain} Restart
-  ${green}12.${plain} Check Status
-  ${green}13.${plain} Check Logs
+  ${green}9.${plain} 启动面板
+  ${green}10.${plain} 关闭面板
+  ${green}11.${plain} 重启面板
+  ${green}12.${plain} 检查面板状态
+  ${green}13.${plain} 检查面板日志
 ————————————————
-  ${green}14.${plain} Enable Autostart
-  ${green}15.${plain} Disable Autostart
+  ${green}14.${plain} 启用开机启动
+  ${green}15.${plain} 禁用开机启动
 ————————————————
-  ${green}16.${plain} SSL Certificate Management
-  ${green}17.${plain} Cloudflare SSL Certificate
-  ${green}18.${plain} IP Limit Management
-  ${green}19.${plain} WARP Management
-  ${green}20.${plain} Firewall Management
+  ${green}16.${plain} SSL 证书管理
+  ${green}17.${plain} CF SSL 证书
+  ${green}18.${plain} IP 限制管理
+  ${green}19.${plain} WARP 管理
+  ${green}20.${plain} 防火墙管理
 ————————————————
-  ${green}21.${plain} Enable BBR 
-  ${green}22.${plain} Update Geo Files
+  ${green}21.${plain} 启用 BBR 
+  ${green}22.${plain} 更新 Geo 文件
   ${green}23.${plain} Speedtest by Ookla
 "
     show_status
-    echo && read -p "Please enter your selection [0-23]: " num
+    echo && read -p "请输入选项 [0-23]: " num
 
     case "${num}" in
     0)
