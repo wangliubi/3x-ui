@@ -71,6 +71,25 @@ elif [[ "${release}" == "manjaro" ]]; then
     echo "您的操作系统是 Manjaro"
 elif [[ "${release}" == "armbian" ]]; then
     echo "您的操作系统是 Armbian"
+elif [[ "${release}" == "oracle" ]]; then
+    if [[ ${os_version} -lt 8 ]]; then
+        echo -e "${red} 请使用 Oracle Linux 8 或更高版本 ${plain}\n" && exit 1
+    fi
+else
+    echo -e "${red}此脚本不支持您的操作系统。${plain}\n"
+    echo "请确保您使用的是以下受支持的操作系统之一："
+    echo "- Ubuntu 20.04+"
+    echo "- Debian 11+"
+    echo "- CentOS 8+"
+    echo "- Fedora 36+"
+    echo "- Arch Linux"
+    echo "- Manjaro"
+    echo "- Armbian"
+    echo "- AlmaLinux 9+"
+    echo "- Rocky Linux 9+"
+    echo "- Oracle Linux 8+"
+    exit 1
+
 fi
 
 # Declare Variables
@@ -396,14 +415,17 @@ enable_bbr() {
 
     # Check the OS and install necessary packages
     case "${release}" in
-    ubuntu | debian)
+    ubuntu | debian | armbian)
         apt-get update && apt-get install -yqq --no-install-recommends ca-certificates
         ;;
-    centos | almalinux | rocky)
+    centos | almalinux | rocky | oracle)
         yum -y update && yum -y install ca-certificates
         ;;
     fedora)
         dnf -y update && dnf -y install ca-certificates
+        ;;
+    arch | manjaro)
+        pacman -Sy --noconfirm ca-certificates
         ;;
     *)
         echo -e "${red}不支持的操作系统。请检查脚本并手动安装必要的软件包${plain}\n"
@@ -723,11 +745,14 @@ ssl_cert_issue() {
     ubuntu | debian | armbian)
         apt update && apt install socat -y
         ;;
-    centos | almalinux | rocky)
+    centos | almalinux | rocky | oracle)
         yum -y update && yum -y install socat
         ;;
     fedora)
         dnf -y update && dnf -y install socat
+        ;;
+    arch | manjaro)
+        pacman -Sy --noconfirm socat
         ;;
     *)
         echo -e "${red}不支持的操作系统，请检查脚本并手动安装必要的软件包。${plain}\n"
@@ -1084,16 +1109,19 @@ install_iplimit() {
 
         # Check the OS and install necessary packages
         case "${release}" in
-        ubuntu | debian)
+        ubuntu | debian | armbian)
             apt update && apt install fail2ban -y
             ;;
-        centos | almalinux | rocky)
+        centos | almalinux | rocky | oracle)
             yum update -y && yum install epel-release -y
             yum -y install fail2ban
             ;;
         fedora)
             dnf -y update && dnf -y install fail2ban
             ;;
+        arch | manjaro)
+        pacman -Syu --noconfirm fail2ban
+        ;;
         *)
             echo -e "${red}不支持的操作系统，请检查脚本并手动安装必要的软件包.${plain}\n"
             exit 1
@@ -1160,18 +1188,21 @@ remove_iplimit() {
         rm -rf /etc/fail2ban
         systemctl stop fail2ban
         case "${release}" in
-        ubuntu | debian)
+        ubuntu | debian | armbian)
             apt-get remove -y fail2ban
             apt-get purge -y fail2ban -y
             apt-get autoremove -y
             ;;
-        centos | almalinux | rocky)
+        centos | almalinux | rocky | oracle)
             yum remove fail2ban -y
             yum autoremove -y
             ;;
         fedora)
             dnf remove fail2ban -y
             dnf autoremove -y
+            ;;
+        arch | manjaro)
+            pacman -Rns --noconfirm fail2ban
             ;;
         *)
             echo -e "${red}不支持的操作系统，请手动卸载 Fail2ban.${plain}\n"

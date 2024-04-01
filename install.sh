@@ -23,7 +23,7 @@ else
 fi
 echo "目前服务器的操作系统为: $release"
 
-arch3xui() {
+arch() {
     case "$(uname -m)" in
         x86_64 | x64 | amd64 ) echo 'amd64' ;;
         i*86 | x86 ) echo '386' ;;
@@ -40,7 +40,13 @@ echo "架构: $(arch3xui)"
 
 os_version=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
 
-if [[ "${release}" == "centos" ]]; then
+if [[ "${release}" == "arch" ]]; then
+    echo "您的操作系统是 ArchLinux"
+elif [[ "${release}" == "manjaro" ]]; then
+    echo "您的操作系统是 Manjaro"
+elif [[ "${release}" == "armbian" ]]; then
+    echo "您的操作系统是 Armbian"
+elif [[ "${release}" == "centos" ]]; then
     if [[ ${os_version} -lt 8 ]]; then
         echo -e "${red} 请使用 CentOS 8 或更高版本 ${plain}\n" && exit 1
     fi
@@ -48,40 +54,46 @@ elif [[ "${release}" == "ubuntu" ]]; then
     if [[ ${os_version} -lt 20 ]]; then
         echo -e "${red} 请使用 Ubuntu 20 或更高版本!${plain}\n" && exit 1
     fi
-
 elif [[ "${release}" == "fedora" ]]; then
     if [[ ${os_version} -lt 36 ]]; then
         echo -e "${red} 请使用 Fedora 36 或更高版本!${plain}\n" && exit 1
     fi
-
 elif [[ "${release}" == "debian" ]]; then
     if [[ ${os_version} -lt 11 ]]; then
         echo -e "${red} 请使用 Debian 11 或更高版本 ${plain}\n" && exit 1
     fi
-
 elif [[ "${release}" == "almalinux" ]]; then
     if [[ ${os_version} -lt 9 ]]; then
         echo -e "${red} 请使用 AlmaLinux 9 或更高版本 ${plain}\n" && exit 1
     fi
-
 elif [[ "${release}" == "rocky" ]]; then
     if [[ ${os_version} -lt 9 ]]; then
         echo -e "${red} 请使用 RockyLinux 9 或更高版本 ${plain}\n" && exit 1
     fi
-elif [[ "${release}" == "arch" ]]; then
-    echo "您的操作系统是 ArchLinux"
-elif [[ "${release}" == "manjaro" ]]; then
-    echo "您的操作系统是 Manjaro"
-elif [[ "${release}" == "armbian" ]]; then
-    echo "您的操作系统是 Armbian"
-
+elif [[ "${release}" == "oracle" ]]; then
+    if [[ ${os_version} -lt 8 ]]; then
+        echo -e "${red} 请使用 Oracle Linux 8 或更高版本 ${plain}\n" && exit 1
+    fi
 else
-    echo -e "${red}无法检查操作系统版本，请联系作者!${plain}" && exit 1
+    echo -e "${red}此脚本不支持您的操作系统。${plain}\n"
+    echo "请确保您使用的是以下受支持的操作系统之一："
+    echo "- Ubuntu 20.04+"
+    echo "- Debian 11+"
+    echo "- CentOS 8+"
+    echo "- Fedora 36+"
+    echo "- Arch Linux"
+    echo "- Manjaro"
+    echo "- Armbian"
+    echo "- AlmaLinux 9+"
+    echo "- Rocky Linux 9+"
+    echo "- Oracle Linux 8+"
+    exit 1
+
 fi
 
 install_base() {
     case "${release}" in
-    centos | almalinux | rocky)
+    centos | almalinux | rocky | oracle)
         yum -y update && yum install -y -q wget curl tar tzdata
         ;;
     fedora)
@@ -140,16 +152,16 @@ install_x-ui() {
             echo -e "${red}Failed to fetch x-ui version, it maybe due to Github API restrictions, please try it later${plain}"
             exit 1
         fi
-        echo -e "获取到 x-ui 最新版本: ${last_version}, 正在安装..."
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz
+        echo -e "Got x-ui latest version: ${last_version}, beginning the installation..."
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz https://github.com/MHSanaei/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui 失败, 请检查服务器是否可以连接至 GitHub ${plain}"
             exit 1
         fi
     else
         last_version=$1
-        url="https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz"
-        echo -e "正在安装 x-ui $1"
+        url="https://github.com/MHSanaei/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz"
+        echo -e "Beginning to install x-ui $1"
         wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui $1 失败, 请检查此版本是否存在 ${plain}"
@@ -162,18 +174,18 @@ install_x-ui() {
         rm /usr/local/x-ui/ -rf
     fi
 
-    tar zxvf x-ui-linux-$(arch3xui).tar.gz
-    rm x-ui-linux-$(arch3xui).tar.gz -f
+    tar zxvf x-ui-linux-$(arch).tar.gz
+    rm x-ui-linux-$(arch).tar.gz -f
     cd x-ui
     chmod +x x-ui
 
     # Check the system's architecture and rename the file accordingly
-    if [[ $(arch3xui) == "armv5" || $(arch3xui) == "armv6" || $(arch3xui) == "armv7" ]]; then
-        mv bin/xray-linux-$(arch3xui) bin/xray-linux-arm
+    if [[ $(arch) == "armv5" || $(arch) == "armv6" || $(arch) == "armv7" ]]; then
+        mv bin/xray-linux-$(arch) bin/xray-linux-arm
         chmod +x bin/xray-linux-arm
     fi
 
-    chmod +x x-ui bin/xray-linux-$(arch3xui)
+    chmod +x x-ui bin/xray-linux-$(arch)
     cp -f x-ui.service /etc/systemd/system/
     wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/Misaka-blog/3x-ui/main/x-ui.sh
     chmod +x /usr/local/x-ui/x-ui.sh

@@ -178,7 +178,8 @@ systemctl restart x-ui
 - Manjaro
 - Armbian
 - AlmaLinux 9+
-- Rockylinux 9+
+- Rocky Linux 9+
+- Oracle Linux 8+
 
 ## 支持的架构和设备
 <details>
