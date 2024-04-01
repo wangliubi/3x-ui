@@ -153,14 +153,14 @@ install_x-ui() {
             exit 1
         fi
         echo -e "Got x-ui latest version: ${last_version}, beginning the installation..."
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz https://github.com/MHSanaei/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui 失败, 请检查服务器是否可以连接至 GitHub ${plain}"
             exit 1
         fi
     else
         last_version=$1
-        url="https://github.com/MHSanaei/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz"
+        url="https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz"
         echo -e "Beginning to install x-ui $1"
         wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
