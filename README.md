@@ -73,6 +73,7 @@ case "${ARCH}" in
   armv7* | armv7) XUI_ARCH="armv7" ;;
   armv6* | armv6) XUI_ARCH="armv6" ;;
   armv5* | armv5) XUI_ARCH="armv5" ;;
+  s390x) echo 's390x' ;;
   *) XUI_ARCH="amd64" ;;
 esac
 
@@ -91,6 +92,7 @@ case "${ARCH}" in
   armv7* | armv7) XUI_ARCH="armv7" ;;
   armv6* | armv6) XUI_ARCH="armv6" ;;
   armv5* | armv5) XUI_ARCH="armv5" ;;
+  s390x) echo 's390x' ;;
   *) XUI_ARCH="amd64" ;;
 esac
 

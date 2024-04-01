@@ -20,6 +20,10 @@ case $1 in
         ARCH="arm32-v6"
         FNAME="armv6"
         ;;
+    s390x)
+        ARCH="s390x"
+        FNAME="s390x"
+        ;;
     *)
         ARCH="64"
         FNAME="amd64"
