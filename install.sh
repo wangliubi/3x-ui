@@ -36,7 +36,7 @@ arch() {
     esac
 }
 
-echo "架构: $(arch3xui)"
+echo "架构: $(arch)"
 
 os_version=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
 
@@ -153,16 +153,16 @@ install_x-ui() {
             exit 1
         fi
         echo -e "Got x-ui latest version: ${last_version}, beginning the installation..."
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch).tar.gz https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch).tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui 失败, 请检查服务器是否可以连接至 GitHub ${plain}"
             exit 1
         fi
     else
         last_version=$1
-        url="https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch3xui).tar.gz"
+        url="https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch).tar.gz"
         echo -e "Beginning to install x-ui $1"
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch3xui).tar.gz ${url}
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui $1 失败, 请检查此版本是否存在 ${plain}"
             exit 1
