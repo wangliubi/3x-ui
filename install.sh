@@ -149,10 +149,10 @@ install_x-ui() {
     if [ $# == 0 ]; then
         last_version=$(curl -Ls "https://api.github.com/repos/Misaka-blog/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$last_version" ]]; then
-            echo -e "${red}Failed to fetch x-ui version, it maybe due to Github API restrictions, please try it later${plain}"
+            echo -e "${red}获取 x-ui 版本失败，可能是 Github API 限制，请稍后再试${plain}"
             exit 1
         fi
-        echo -e "Got x-ui latest version: ${last_version}, beginning the installation..."
+        echo -e "获取 x-ui 最新版本：${last_version}，开始安装..."
         wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch).tar.gz https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch).tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui 失败, 请检查服务器是否可以连接至 GitHub ${plain}"
@@ -161,7 +161,7 @@ install_x-ui() {
     else
         last_version=$1
         url="https://github.com/Misaka-blog/3x-ui/releases/download/${last_version}/x-ui-linux-$(arch).tar.gz"
-        echo -e "Beginning to install x-ui $1"
+        echo -e "开始安装 x-ui $1"
         wget -N --no-check-certificate -O /usr/local/x-ui-linux-$(arch).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui $1 失败, 请检查此版本是否存在 ${plain}"
@@ -214,6 +214,5 @@ install_x-ui() {
     echo -e "----------------------------------------------"
 }
 
-echo -e "${green}Running...${plain}"
 install_base
 install_x-ui $1
