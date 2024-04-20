@@ -115,9 +115,9 @@ config_after_install() {
     if [[ "${config_confirm}" == "y" || "${config_confirm}" == "Y" ]]; then
         read -p "请设置您的用户名: " config_account
         echo -e "${yellow}您的用户名将是: ${config_account}${plain}"
-        read -p "请设置您的密码:" config_password
+        read -p "请设置您的密码: " config_password
         echo -e "${yellow}您的密码将是: ${config_password}${plain}"
-        read -p "请设置面板端口:" config_port
+        read -p "请设置面板端口: " config_port
         echo -e "${yellow}您的面板端口号为: ${config_port}${plain}"
         echo -e "${yellow}正在初始化，请稍候...${plain}"
         /usr/local/x-ui/x-ui setting -username ${config_account} -password ${config_password}
@@ -132,8 +132,8 @@ config_after_install() {
             /usr/local/x-ui/x-ui setting -username ${usernameTemp} -password ${passwordTemp}
             echo -e "检测到为全新安装，出于安全考虑将生成随机登录信息:"
             echo -e "###############################################"
-            echo -e "${green}用户名:${usernameTemp}${plain}"
-            echo -e "${green}密  码:${passwordTemp}${plain}"
+            echo -e "${green}用户名: ${usernameTemp}${plain}"
+            echo -e "${green}密  码: ${passwordTemp}${plain}"
             echo -e "###############################################"
             echo -e "${red} 如果您忘记了登录信息，可以在安装后输入 x-ui 然后输入 8 选项进行检查 ${plain}"
         else
@@ -222,12 +222,12 @@ install_x-ui() {
     echo -e "----------------------------------------------"
     echo ""
     if [[ -n $ipv4 ]]; then
-        echo -e "${yellow}面板 IPv4 访问地址为：${plain} ${green}http://$ipv4:$config_port ${plain}"
+        echo -e "${yellow}面板 IPv4 访问地址为：${plain}${green}http://$ipv4:$config_port${plain}"
     fi
     if [[ -n $ipv6 ]]; then
-        echo -e "${yellow}面板 IPv6 访问地址为：${plain} ${green}http://[$ipv6]:$config_port ${plain}"
+        echo -e "${yellow}面板 IPv6 访问地址为：${plain}${green}http://[$ipv6]:$config_port${plain}"
     fi
-    echo -e "请自行确保此端口没有被其他程序占用，${yellow}并且确保${plain} ${red} $config_port ${plain} ${yellow}端口已放行${plain}"
+    echo -e "请自行确保此端口没有被其他程序占用，${yellow}并且确保${plain}${red} $config_port ${plain}${yellow}端口已放行${plain}"
 }
 
 install_base
