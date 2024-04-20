@@ -195,6 +195,14 @@ install_x-ui() {
     systemctl daemon-reload
     systemctl enable x-ui
     systemctl start x-ui
+
+    systemctl stop warp-go >/dev/null 2>&1
+    wg-quick down wgcf >/dev/null 2>&1
+    ipv4=$(curl -s4m8 ip.p3terx.com -k | sed -n 1p)
+    ipv6=$(curl -s6m8 ip.p3terx.com -k | sed -n 1p)
+    systemctl start warp-go >/dev/null 2>&1
+    wg-quick up wgcf >/dev/null 2>&1
+
     echo -e "${green}x-ui ${last_version}${plain} 安装成功，正在启动..."
     echo -e ""
     echo -e "x-ui 控制菜单用法: "
@@ -212,6 +220,14 @@ install_x-ui() {
     echo -e "x-ui install      - 安装 x-ui"
     echo -e "x-ui uninstall    - 卸载 x-ui"
     echo -e "----------------------------------------------"
+    echo ""
+    if [[ -n $ipv4 ]]; then
+        echo -e "${yellow}面板 IPv4 访问地址为：${plain} ${green}http://$ipv4:$config_port ${plain}"
+    fi
+    if [[ -n $ipv6 ]]; then
+        echo -e "${yellow}面板 IPv6 访问地址为：${plain} ${green}http://[$ipv6]:$config_port ${plain}"
+    fi
+    echo -e "请自行确保此端口没有被其他程序占用，${yellow}并且确保${plain} ${red} $config_port ${plain} ${yellow}端口已放行${plain}"
 }
 
 install_base
