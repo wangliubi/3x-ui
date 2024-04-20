@@ -22,10 +22,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/insta
 
 ## 安装指定版本
 
-要安装所需的版本，请将该版本添加到安装命令的末尾。 e.g., ver `v2.3.0`:
+要安装所需的版本，请将该版本添加到安装命令的末尾。 e.g., ver `v2.3.0.1`:
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/install.sh) v2.3.0
+bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/install.sh) v2.3.0.1
 ```
 
 ## SSL 认证
