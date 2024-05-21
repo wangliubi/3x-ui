@@ -4,7 +4,7 @@
 
 **一个更好的面板 • 基于Xray Core构建**
 
-[![](https://img.shields.io/github/v/release/misaka-blog/3x-ui.svg)](https://github.com/Misaka-blog/3x-ui/releases)
+[![](https://img.shields.io/github/v/release/misaka-blog/3x-ui.svg)](https://github.com/wangliubi/3x-ui/releases)
 [![](https://img.shields.io/github/actions/workflow/status/misaka-blog/3x-ui/release.yml.svg)](#)
 [![GO Version](https://img.shields.io/github/go-mod/go-version/misaka-blog/3x-ui.svg)](#)
 [![Downloads](https://img.shields.io/github/downloads/misaka-blog/3x-ui/total.svg)](#)
@@ -17,7 +17,7 @@
 ## 安装 & 升级
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/wangliubi/3x-ui/master/install.sh)
 ```
 
 ## 安装指定版本
@@ -25,7 +25,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/insta
 要安装所需的版本，请将该版本添加到安装命令的末尾。 e.g., ver `v2.3.0.1`:
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/Misaka-blog/3x-ui/master/install.sh) v2.3.0.1
+bash <(curl -Ls https://raw.githubusercontent.com/wangliubi/3x-ui/master/install.sh) v2.3.0.1
 ```
 
 ## SSL 认证
@@ -78,7 +78,7 @@ case "${ARCH}" in
 esac
 
 
-wget https://github.com/Misaka-blog/3x-ui/releases/latest/download/x-ui-linux-${XUI_ARCH}.tar.gz
+wget https://github.com/wangliubi/3x-ui/releases/latest/download/x-ui-linux-${XUI_ARCH}.tar.gz
 ```
 
 2. 下载压缩包后，执行以下命令安装或升级 x-ui：
